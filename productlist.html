@@ -172,40 +172,33 @@ window.onload = function () {
       }
     });
 
-    document.querySelectorAll('.btn-description').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const desc = btn.getAttribute('data-desc') || 'No description available';
-        const popup = document.getElementById('descPopup');
-        popup.textContent = desc;
-        popup.style.display = 'block';
+ document.querySelectorAll('.btn-description').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const desc = btn.getAttribute('data-desc') || 'No description available';
+    const popup = document.getElementById('descPopup');
+    popup.textContent = desc;
 
-        const rect = btn.getBoundingClientRect();
-const popup = document.getElementById('descPopup');
-popup.textContent = desc;
+    const rect = btn.getBoundingClientRect();
 
-// Check if screen is narrow (mobile/tablet)
-if (window.innerWidth <= 913) {
-  popup.classList.add("below");
-  popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
-  popup.style.left = `${rect.left}px`;
-} else {
-  popup.classList.remove("below");
-  popup.style.top = `${rect.top + window.scrollY - 10}px`;
-  popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
-}
+    // Mobile layout
+    if (window.innerWidth <= 913) {
+      popup.classList.add("below");
+      popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+      popup.style.left = `${rect.left}px`;
+    } else {
+      popup.classList.remove("below");
+      popup.style.top = `${rect.top + window.scrollY - 10}px`;
+      popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
+    }
 
-popup.style.display = 'block';
+    popup.style.display = 'block';
 
-setTimeout(() => {
-  popup.style.display = 'none';
-}, 4000);
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 4000);
+  });
+});
 
-
-        setTimeout(() => {
-          popup.style.display = 'none';
-        }, 4000);
-      });
-    });
   }
 
   fetch('https://productslist.onrender.com/api/products')

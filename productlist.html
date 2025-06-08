@@ -142,7 +142,7 @@
   });
 
   window.onload = function () {
-    fetch('http://localhost:5000/api/products')
+    fetch('https://productslist.onrender.com/api/products')
       .then(res => res.json())
       .then(products => {
         const tbody = document.querySelector('tbody');

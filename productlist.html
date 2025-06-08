@@ -140,38 +140,26 @@
       dropdown.style.display = "none";
     }
   });
-
-  window.onload = function () {
-    fetch('https://productslist.onrender.com/api/products')
-      .then(res => res.json())
-      .then(products => {
-        const tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-
-        products.forEach((product, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><button class="barcode-btn">VIEW BARCODE</button></td>
-            <td>${index + 1}</td>
-            <td>${product.barcode}</td>
-            <td>${product.name}</td>
-            <td>${product.details}</td>
-            <td>${product.weight}</td>
-            <td>${product.quantity}</td>
-            <td>${product.company}</td>
-            <td><button class="btn-description">Description</button></td>
-            <td>${product.startDate}</td>
-            <td>${product.endDate}</td>
-            <td>₹${product.price}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      })
-      .catch(error => {
-        console.error('Error loading products:', error);
-      });
-  };
-
+fetch("https://productslist.onrender.com/api/products", {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(productData)
+})
+.then(response => {
+  if (response.ok) {
+    alert('Product added successfully!');
+    document.getElementById('productForm').reset();
+    window.location.href = "productlist.html"; // <-- Redirect to product list page
+  } else {
+    alert('Failed to add product.');
+  }
+})
+.catch(error => {
+  console.error('Error:', error);
+  alert('An error occurred.');
+});
 
 
 </script>

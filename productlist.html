@@ -101,7 +101,6 @@
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   }
 
-  // Optional: Close dropdown when clicking outside
   document.addEventListener("click", function (event) {
     const dropdown = document.getElementById("dropdown");
     const admin = document.querySelector(".admin");
@@ -111,7 +110,6 @@
     }
   });
 
-  // After appending rows
 document.querySelectorAll('.barcode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     alert('Show barcode here');
@@ -145,7 +143,6 @@ window.onload = function () {
         tbody.appendChild(row);
       });
 
-      // ✅ Add this block after appending rows
       document.querySelectorAll('.btn-description').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const desc = btn.getAttribute('data-desc') || 'No description available';
@@ -155,8 +152,8 @@ window.onload = function () {
 
           const rect = btn.getBoundingClientRect();
           popup.style.top = `${rect.top + window.scrollY - 10}px`;
-          popup.style.left = `${rect.right + 10}px`;
-
+          popup.style.left = `${rect.left - popup.offsetWidth - 10}px`; 
+    
           setTimeout(() => {
             popup.style.display = 'none';
           }, 4000);

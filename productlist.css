@@ -98,7 +98,9 @@ th {
   font-family: 'Nunito', sans-serif;
   font-weight: bold;
 }
-
+.description-popup.below {
+  position: absolute;
+}
 /* Enable scroll and responsive behavior for the table */
 .table-scroll {
   overflow-x: auto;

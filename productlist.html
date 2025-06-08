@@ -172,31 +172,39 @@ window.onload = function () {
       }
     });
 
- document.querySelectorAll('.btn-description').forEach(btn => {
+ let popupTimeout; // global timeout ref to clear previous timers
+
+document.querySelectorAll('.btn-description').forEach(btn => {
   btn.addEventListener('click', (e) => {
     const desc = btn.getAttribute('data-desc') || 'No description available';
     const popup = document.getElementById('descPopup');
     popup.textContent = desc;
+    popup.style.display = 'block';
+    popup.classList.remove("below");
 
     const rect = btn.getBoundingClientRect();
 
-    // Mobile layout
+    // Mobile/tablet layout (≤ 913px): center below button
     if (window.innerWidth <= 913) {
       popup.classList.add("below");
+      popup.style.top = `${rect.bottom + window.scrollY + 8}px`;
       popup.style.left = `${rect.left + rect.width / 2 - popup.offsetWidth / 2}px`;
     } else {
-      popup.classList.remove("below");
-      popup.style.top = `${rect.top + window.scrollY - 10}px`;
-      popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
+      // Desktop: show to the left
+      popup.style.top = `${rect.top + window.scrollY}px`;
+      popup.style.left = `${rect.left - popup.offsetWidth - 12}px`;
     }
 
-    popup.style.display = 'block';
+    // Clear previous timeout if exists
+    clearTimeout(popupTimeout);
 
-    setTimeout(() => {
+    // Auto-hide popup after 6 seconds
+    popupTimeout = setTimeout(() => {
       popup.style.display = 'none';
-    }, 4000);
+    }, 6000);
   });
 });
+
 
   }
 

@@ -98,9 +98,7 @@ th {
   font-family: 'Nunito', sans-serif;
   font-weight: bold;
 }
-.description-popup.below {
-  position: absolute;
-}
+
 /* Enable scroll and responsive behavior for the table */
 .table-scroll {
   overflow-x: auto;
@@ -186,12 +184,5 @@ html {
 
   .entries-control {
     width: 100%;
-  }
-}
-@media (max-width: 913px) {
-  .description-popup.below {
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
   }
 }

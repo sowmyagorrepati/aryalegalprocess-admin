@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product List Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="addproduct.css">
+  <link rel="stylesheet" href="email.css">
+    <link rel="stylesheet" href="productlist.css">
+
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">&#9776; <span class="text">ARYA LEGAL PROCESS</span> </div>
+    <ul class="menu">
+        <li><a href="home.html"><span class="icon">🏠</span><span class="text">Home</span></a></li>
+        <li><a href="company.html"><span class="icon">🛠️</span><span class="text">Manage Companies</span></a></li>
+        <li><a href="addproduct.html"><span class="icon">➕</span><span class="text">Add Products</span></a></li>
+        <li><a href="productlist.html"><span class="icon">📦</span><span class="text">Products List</span></a></li>
+        <li><a href="email.html"><span class="icon">📧</span><span class="text">Send E-Mail</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+
+        <div class="navbar">
+  <div class="admin-dropdown">
+    <div class="admin" onclick="toggleDropdown()">ADMIN</div>
+    <div class="dropdown-menu" id="dropdown">
+       <a href="password.html">Change Password</a>
+      <a href="index.html">Logout</a>
+    </div>
+  </div>
+</div>
+
+  <div class="heading">
+    <h2>📦 DASHBOARD - Product List</h2>
+  </div>
+
+<div class="container">
+    <div class="card">
+      <h3 class="sub-heading">Product List</h3>
+
+      <div class="controls">
+        <div class="entries-control">
+          Show
+          <select>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          entries
+        </div>
+        <div class="search-box">
+          Search: <input type="text">
+        </div>
+      </div>
+<div class="table-scroll">
+          <table>
+        <thead>
+          <tr>
+            <th>ACTIONS</th>
+            <th>ID</th>
+            <th>BAR CODE</th>
+            <th>NAME</th>
+            <th>DETAILS</th>
+            <th>WEIGHT</th>
+            <th>QUANTITY</th>
+            <th>COMPANY</th>
+            <th>DESCRIPTION</th>
+            <th>START DATE</th>
+            <th>END DATE</th>
+            <th>PRICE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><button class="barcode-btn">VIEW BARCODE</button></td>
+            <td>6</td>
+            <td>8924405908995</td>
+            <td>kumkum</td>
+            <td>kumkum hygienic</td>
+            <td>500g</td>
+            <td>20</td>
+            <td>Kumkum Ltd</td>
+            <td><button class="btn-description">Description</button></td>
+            <td>2025-01-01</td>
+            <td>2026-01-01</td>
+            <td>₹50</td>
+          </tr>
+          <tr>
+            <td><button class="barcode-btn">VIEW BARCODE</button></td>
+            <td>7</td>
+            <td>8924405909268</td>
+            <td>JONNA PINDI</td>
+            <td>Graded quality jowar flour</td>
+            <td>1kg</td>
+            <td>50</td>
+            <td>GrainCo</td>
+            <td><button class="btn-description">Description</button></td>
+            <td>2025-02-01</td>
+            <td>2026-02-01</td>
+            <td>₹70</td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+
+</div>
+
+    </div>
+  </div>
+
+  
+  </div>
+
+  
+  
+ <script src="addproducts.js"></script>
+<script>
+  const sidebar = document.querySelector('.sidebar');
+
+  sidebar.addEventListener('click', () => {
+    sidebar.classList.toggle('expanded');
+  });
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById("dropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  // Optional: Close dropdown when clicking outside
+  document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("dropdown");
+    const admin = document.querySelector(".admin");
+
+    if (!admin.contains(event.target)) {
+      dropdown.style.display = "none";
+    }
+  });
+
+  window.onload = function () {
+    fetch('http://localhost:5000/api/products')
+      .then(res => res.json())
+      .then(products => {
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        products.forEach((product, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><button class="barcode-btn">VIEW BARCODE</button></td>
+            <td>${index + 1}</td>
+            <td>${product.barcode}</td>
+            <td>${product.name}</td>
+            <td>${product.details}</td>
+            <td>${product.weight}</td>
+            <td>${product.quantity}</td>
+            <td>${product.company}</td>
+            <td><button class="btn-description">Description</button></td>
+            <td>${product.startDate}</td>
+            <td>${product.endDate}</td>
+            <td>₹${product.price}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading products:', error);
+      });
+  };
+
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ARYA LEGAL PROCESS Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">&#9776; <span class="text">ARYA LEGAL PROCESS</span> </div>
+    <ul class="menu">
+        <li><a href="home.html"><span class="icon">🏠</span><span class="text">Home</span></a></li>
+        <li><a href="company.html"><span class="icon">🛠️</span><span class="text">Manage Companies</span></a></li>
+        <li><a href="addproduct.html"><span class="icon">➕</span><span class="text">Add Products</span></a></li>
+        <li><a href="productlist.html"><span class="icon">📦</span><span class="text">Products List</span></a></li>
+        <li><a href="email.html"><span class="icon">📧</span><span class="text">Send E-Mail</span></a></li>
+                
+    </ul>
+  </div>
+
+  <div class="main-content">
+
+     <div class="navbar">
+  <div class="admin-dropdown">
+    <div class="admin" onclick="toggleDropdown()">ADMIN</div>
+    <div class="dropdown-menu" id="dropdown">
+      <a href="password.html">Change Password</a>
+      <a href="index.html">Logout</a>
+    </div>
+  </div>
+</div>
+
+<div class="banner">
+     <h2 class="homedash">DASHBOARD</h2>
+    <div class="card-container">
+      <div class="card">
+        <div class="card-content">
+          <div>
+            <p class="label">TOTAL PRODUCTS</p>
+            <h1>264</h1>
+            <button class="btn-view">VIEW</button>
+          </div>
+          <div class="card-icon">📦</div>
+        </div>
+      </div>
+    </div>
+</div>
+   
+
+    <div class="table-section">
+      <h3>RECENTLY ADDED PRODUCTS</h3>
+      <div class="table-controls">
+        <label>Show 
+          <select>
+            <option>10</option>
+            <option>25</option>
+          </select> entries
+        </label>
+        <label>Search: <input type="text" /></label>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ACTIONS</th>
+            <th>ID</th>
+            <th>BAR CODE</th>
+            <th>NAME</th>
+            <th>DETAILS</th>
+            <th>WEIGHT</th>
+            <th>QUANTITY</th>
+            <th>COMPANY</th>
+            <th>DESCRIPTION</th>
+            <th>START DATE</th>
+            <th>END DATE</th>
+            <th>PRICE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><button class="btn-barcode">VIEW BARCODE</button></td>
+            <td>276</td>
+            <td>8924455682449</td>
+            <td>MAKKA RAVVA</td>
+            <td></td>
+            <td>500 GRAMS</td>
+            <td>1</td>
+            <td>RLV INSTANT PRODUCTS</td>
+            <td><button class="btn-description">Description</button></td>
+            <td>2025-05-01</td>
+            <td>2025-05-31</td>
+            <td>₹60</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  const sidebar = document.querySelector('.sidebar');
+
+  sidebar.addEventListener('click', () => {
+    sidebar.classList.toggle('expanded');
+  });
+
+  function toggleDropdown() {
+    const dropdown = document.getElementById("dropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  // Optional: Close dropdown when clicking outside
+  document.addEventListener("click", function (event) {
+    const dropdown = document.getElementById("dropdown");
+    const admin = document.querySelector(".admin");
+
+    if (!admin.contains(event.target)) {
+      dropdown.style.display = "none";
+    }
+  });
+
+</script>
+
+</body>
+</html>

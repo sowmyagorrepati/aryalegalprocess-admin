@@ -85,9 +85,6 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     showError(price, 'Price is required.');
   }
 
-  if (valid) {
-    // All validations passed - you can submit the form here or do other logic
-    alert('Form submitted successfully!');
     if (valid) {
   const productData = {
     barcode: barcode.value.trim(),
@@ -123,5 +120,4 @@ fetch("https://productslist.onrender.com/api/products", {
   });
 }
 
-  }
 });

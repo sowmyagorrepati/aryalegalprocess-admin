@@ -53,9 +53,10 @@
           </select>
           entries
         </div>
-        <div class="search-box">
-          Search: <input type="text">
-        </div>
+      <div class="search-box">
+  Search: <input type="text" id="searchInput">
+</div>
+
       </div>
 <div class="table-scroll">
           <table>
@@ -143,22 +144,40 @@ window.onload = function () {
         tbody.appendChild(row);
       });
 
-      document.querySelectorAll('.btn-description').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const desc = btn.getAttribute('data-desc') || 'No description available';
-          const popup = document.getElementById('descPopup');
-          popup.textContent = desc;
-          popup.style.display = 'block';
+     document.querySelectorAll('.btn-description').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const desc = btn.getAttribute('data-desc') || 'No description available';
+    const popup = document.getElementById('descPopup');
+    popup.textContent = desc;
+    popup.style.display = 'block';
 
-          const rect = btn.getBoundingClientRect();
-          popup.style.top = `${rect.top + window.scrollY - 10}px`;
-          popup.style.left = `${rect.left - popup.offsetWidth - 10}px`; 
-    
-          setTimeout(() => {
-            popup.style.display = 'none';
-          }, 4000);
-        });
-      });
+    const rect = btn.getBoundingClientRect();
+    popup.style.top = `${rect.top + window.scrollY - 10}px`;
+    popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
+
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 4000);
+  });
+});
+
+// Live search
+const searchInput = document.getElementById("searchInput");
+
+searchInput.addEventListener("input", function () {
+  const filter = this.value.toLowerCase();
+  const rows = document.querySelectorAll("tbody tr");
+
+  rows.forEach(row => {
+    const rowText = row.textContent.toLowerCase();
+    if (rowText.includes(filter)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+});
+
     })
     .catch(error => {
       console.error('Error loading products:', error);

@@ -87,8 +87,6 @@
 
   
   </div>
-
-  
   
  <script src="addproducts.js"></script>
 <script>
@@ -121,40 +119,59 @@ document.querySelectorAll('.barcode-btn').forEach(btn => {
 });
 
 
-  window.onload = function () {
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = ''; // clear static rows
+window.onload = function () {
+  const tbody = document.querySelector('tbody');
+  tbody.innerHTML = ''; // clear static rows
 
-    fetch('https://productslist.onrender.com/api/products')
-      .then(res => res.json())
-      .then(products => {
-        products.forEach((product, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><button class="barcode-btn">VIEW BARCODE</button></td>
-            <td>${index + 1}</td>
-            <td>${product.barcode}</td>
-            <td>${product.name}</td>
-            <td>${product.details}</td>
-            <td>${product.weight}</td>
-            <td>${product.quantity}</td>
-            <td>${product.company}</td>
-            <td><button class="btn-description">Description</button></td>
-            <td>${product.startDate}</td>
-            <td>${product.endDate}</td>
-            <td>₹${product.price}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      })
-      .catch(error => {
-        console.error('Error loading products:', error);
-        tbody.innerHTML = '<tr><td colspan="12">Failed to load products.</td></tr>';
+  fetch('https://productslist.onrender.com/api/products')
+    .then(res => res.json())
+    .then(products => {
+      products.forEach((product, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><button class="barcode-btn">VIEW BARCODE</button></td>
+          <td>${index + 1}</td>
+          <td>${product.barcode}</td>
+          <td>${product.name}</td>
+          <td>${product.details}</td>
+          <td>${product.weight}</td>
+          <td>${product.quantity}</td>
+          <td>${product.company}</td>
+          <td><button class="btn-description" data-desc="${product.description}">Description</button></td>
+          <td>${product.startDate}</td>
+          <td>${product.endDate}</td>
+          <td>₹${product.price}</td>
+        `;
+        tbody.appendChild(row);
       });
-  }
+
+      // ✅ Add this block after appending rows
+      document.querySelectorAll('.btn-description').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const desc = btn.getAttribute('data-desc') || 'No description available';
+          const popup = document.getElementById('descPopup');
+          popup.textContent = desc;
+          popup.style.display = 'block';
+
+          const rect = btn.getBoundingClientRect();
+          popup.style.top = `${rect.top + window.scrollY - 10}px`;
+          popup.style.left = `${rect.right + 10}px`;
+
+          setTimeout(() => {
+            popup.style.display = 'none';
+          }, 4000);
+        });
+      });
+    })
+    .catch(error => {
+      console.error('Error loading products:', error);
+      tbody.innerHTML = '<tr><td colspan="12">Failed to load products.</td></tr>';
+    });
+}
+
 
 </script>
 
-
+<div id="descPopup" class="description-popup"></div>
 </body>
 </html>

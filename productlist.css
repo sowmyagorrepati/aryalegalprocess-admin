@@ -98,6 +98,19 @@ th {
   font-family: 'Nunito', sans-serif;
   font-weight: bold;
 }
+.description-popup {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 5px;
+  max-width: 300px;
+  z-index: 1000;
+  display: none;
+  white-space: normal;
+  font-size: 14px;
+}
+
 
 /* Enable scroll and responsive behavior for the table */
 .table-scroll {
@@ -184,5 +197,12 @@ html {
 
   .entries-control {
     width: 100%;
+  }
+}
+@media (max-width: 913px) {
+  .description-popup.below {
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
   }
 }

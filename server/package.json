@@ -1,0 +1,20 @@
+{
+  "name": "aryalegalprocess-admin",
+  "version": "1.0.0",
+  "description": "Backend for Arya Legal Process admin panel",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sowmyagorrepati/aryalegalprocess-admin.git"
+  },
+  "author": "sowmya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sowmyagorrepati/aryalegalprocess-admin/issues"
+  },
+  "homepage": "https://github.com/sowmyagorrepati/aryalegalprocess-admin#readme"
+}

@@ -45,14 +45,16 @@
 
       <div class="controls">
         <div class="entries-control">
-          Show
-          <select>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-          entries
-        </div>
+  Show
+  <select id="entriesSelect">
+    <option value="10">10</option>
+    <option value="25">25</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
+  </select>
+  entries
+</div>
+
       <div class="search-box">
   Search: <input type="text" id="searchInput">
 </div>
@@ -120,70 +122,88 @@ document.querySelectorAll('.barcode-btn').forEach(btn => {
 
 window.onload = function () {
   const tbody = document.querySelector('tbody');
-  tbody.innerHTML = ''; // clear static rows
+  const searchInput = document.getElementById("searchInput");
+  const entriesSelect = document.getElementById("entriesSelect");
+
+  let allProducts = [];
+
+  function renderTable(products) {
+    tbody.innerHTML = "";
+    const filter = searchInput.value.toLowerCase();
+    const limit = parseInt(entriesSelect.value);
+
+    let count = 0;
+
+    products.forEach((product, index) => {
+      const rowText = `
+        ${index + 1}
+        ${product.barcode}
+        ${product.name}
+        ${product.details}
+        ${product.weight}
+        ${product.quantity}
+        ${product.company}
+        ${product.description}
+        ${product.startDate}
+        ${product.endDate}
+        ₹${product.price}
+      `.toLowerCase();
+
+      if (rowText.includes(filter)) {
+        if (count < limit) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><button class="barcode-btn">VIEW BARCODE</button></td>
+            <td>${index + 1}</td>
+            <td>${product.barcode}</td>
+            <td>${product.name}</td>
+            <td>${product.details}</td>
+            <td>${product.weight}</td>
+            <td>${product.quantity}</td>
+            <td>${product.company}</td>
+            <td><button class="btn-description" data-desc="${product.description}">Description</button></td>
+            <td>${product.startDate}</td>
+            <td>${product.endDate}</td>
+            <td>₹${product.price}</td>
+          `;
+          tbody.appendChild(row);
+          count++;
+        }
+      }
+    });
+
+    document.querySelectorAll('.btn-description').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const desc = btn.getAttribute('data-desc') || 'No description available';
+        const popup = document.getElementById('descPopup');
+        popup.textContent = desc;
+        popup.style.display = 'block';
+
+        const rect = btn.getBoundingClientRect();
+        popup.style.top = `${rect.top + window.scrollY - 10}px`;
+        popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
+
+        setTimeout(() => {
+          popup.style.display = 'none';
+        }, 4000);
+      });
+    });
+  }
 
   fetch('https://productslist.onrender.com/api/products')
     .then(res => res.json())
     .then(products => {
-      products.forEach((product, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><button class="barcode-btn">VIEW BARCODE</button></td>
-          <td>${index + 1}</td>
-          <td>${product.barcode}</td>
-          <td>${product.name}</td>
-          <td>${product.details}</td>
-          <td>${product.weight}</td>
-          <td>${product.quantity}</td>
-          <td>${product.company}</td>
-          <td><button class="btn-description" data-desc="${product.description}">Description</button></td>
-          <td>${product.startDate}</td>
-          <td>${product.endDate}</td>
-          <td>₹${product.price}</td>
-        `;
-        tbody.appendChild(row);
-      });
+      allProducts = products;
+      renderTable(allProducts);
 
-     document.querySelectorAll('.btn-description').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const desc = btn.getAttribute('data-desc') || 'No description available';
-    const popup = document.getElementById('descPopup');
-    popup.textContent = desc;
-    popup.style.display = 'block';
-
-    const rect = btn.getBoundingClientRect();
-    popup.style.top = `${rect.top + window.scrollY - 10}px`;
-    popup.style.left = `${rect.left - popup.offsetWidth - 10}px`;
-
-    setTimeout(() => {
-      popup.style.display = 'none';
-    }, 4000);
-  });
-});
-
-// Live search
-const searchInput = document.getElementById("searchInput");
-
-searchInput.addEventListener("input", function () {
-  const filter = this.value.toLowerCase();
-  const rows = document.querySelectorAll("tbody tr");
-
-  rows.forEach(row => {
-    const rowText = row.textContent.toLowerCase();
-    if (rowText.includes(filter)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
-});
-
+      searchInput.addEventListener("input", () => renderTable(allProducts));
+      entriesSelect.addEventListener("change", () => renderTable(allProducts));
     })
     .catch(error => {
       console.error('Error loading products:', error);
       tbody.innerHTML = '<tr><td colspan="12">Failed to load products.</td></tr>';
     });
-}
+};
 
 
 </script>

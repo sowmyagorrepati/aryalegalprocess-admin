@@ -183,8 +183,7 @@ window.onload = function () {
     // Mobile layout
     if (window.innerWidth <= 913) {
       popup.classList.add("below");
-      popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
-      popup.style.left = `${rect.left}px`;
+      popup.style.left = `${rect.left + rect.width / 2 - popup.offsetWidth / 2}px`;
     } else {
       popup.classList.remove("below");
       popup.style.top = `${rect.top + window.scrollY - 10}px`;

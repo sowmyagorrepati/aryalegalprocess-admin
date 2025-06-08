@@ -78,29 +78,16 @@
             <th>PRICE</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><button class="btn-barcode">VIEW BARCODE</button></td>
-            <td>276</td>
-            <td>8924455682449</td>
-            <td>MAKKA RAVVA</td>
-            <td></td>
-            <td>500 GRAMS</td>
-            <td>1</td>
-            <td>RLV INSTANT PRODUCTS</td>
-            <td><button class="btn-description">Description</button></td>
-            <td>2025-05-01</td>
-            <td>2025-05-31</td>
-            <td>₹60</td>
-          </tr>
-        </tbody>
+       <tbody id="recentProductsBody">
+  <!-- Recent products will be dynamically inserted here -->
+</tbody>
+
       </table>
     </div>
   </div>
 
-  <script>
+ <script>
   const sidebar = document.querySelector('.sidebar');
-
   sidebar.addEventListener('click', () => {
     sidebar.classList.toggle('expanded');
   });
@@ -110,7 +97,6 @@
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   }
 
-  // Optional: Close dropdown when clicking outside
   document.addEventListener("click", function (event) {
     const dropdown = document.getElementById("dropdown");
     const admin = document.querySelector(".admin");
@@ -120,6 +106,43 @@
     }
   });
 
+  // Load recent products
+  window.onload = function () {
+    fetch('https://productslist.onrender.com/api/products')
+      .then(res => res.json())
+      .then(products => {
+        const recentProducts = products.slice(-10).reverse(); // Get last 10 added products
+        const tbody = document.getElementById('recentProductsBody');
+
+        recentProducts.forEach((product, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><button class="btn-barcode">VIEW BARCODE</button></td>
+            <td>${products.length - index}</td>
+            <td>${product.barcode}</td>
+            <td>${product.name}</td>
+            <td>${product.details}</td>
+            <td>${product.weight}</td>
+            <td>${product.quantity}</td>
+            <td>${product.company}</td>
+            <td><button class="btn-description" onclick="alert('${product.description || 'No description'}')">Description</button></td>
+            <td>${product.startDate}</td>
+            <td>${product.endDate}</td>
+            <td>₹${product.price}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Update product count in the dashboard card
+        const countElement = document.querySelector('.label + h1');
+        if (countElement) countElement.textContent = products.length;
+      })
+      .catch(err => {
+        console.error('Failed to load products:', err);
+        const tbody = document.getElementById('recentProductsBody');
+        tbody.innerHTML = '<tr><td colspan="12">Error loading products.</td></tr>';
+      });
+  };
 </script>
 
 </body>

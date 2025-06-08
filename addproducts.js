@@ -102,7 +102,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     price: price.value.trim()
   };
 
-  fetch('http://localhost:5000/api/products', {
+  ffetch("https://productslist.onrender.com/products", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

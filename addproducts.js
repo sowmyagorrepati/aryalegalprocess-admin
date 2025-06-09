@@ -1,3 +1,29 @@
+// 1. Populate companies dropdown when the page loads
+window.addEventListener("DOMContentLoaded", () => {
+  fetch('https://productslist.onrender.com/api/companies')
+    .then(res => res.json())
+    .then(companies => {
+      const select = document.getElementById("company"); // Use "company" to match your validation
+
+      const uniqueCompanyNames = new Set();
+      companies.forEach(company => {
+        if (!uniqueCompanyNames.has(company.companyName)) {
+          uniqueCompanyNames.add(company.companyName);
+
+          const option = document.createElement("option");
+          option.value = company.companyName;
+          option.textContent = company.companyName;
+          select.appendChild(option);
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Failed to fetch companies:", err);
+      alert("Could not load company names. Please try again later.");
+    });
+});
+
+// 2. Form submit handler with validation and submission
 document.getElementById('productForm').addEventListener('submit', function(e) {
   e.preventDefault(); // prevent actual form submission
 
@@ -19,142 +45,87 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     input.parentNode.insertBefore(error, input.nextSibling);
   }
 
-  // Validate Barcode
+  // Validate inputs
   const barcode = document.getElementById('barcode');
-  if (!barcode.value.trim()) {
-    showError(barcode, 'Barcode Number is required.');
-  }
+  if (!barcode.value.trim()) showError(barcode, 'Barcode Number is required.');
 
-  // Validate Product Name
   const productName = document.getElementById('product-name');
-  if (!productName.value.trim()) {
-    showError(productName, 'Product Name is required.');
-  }
+  if (!productName.value.trim()) showError(productName, 'Product Name is required.');
 
-  // Validate Product Details (textarea)
   const productDetails = document.getElementById('product-details');
-  if (!productDetails.value.trim()) {
-    showError(productDetails, 'Product Details are required.');
-  }
+  if (!productDetails.value.trim()) showError(productDetails, 'Product Details are required.');
 
-  // Validate Weightage
   const weightage = document.getElementById('weightage');
-  if (!weightage.value.trim()) {
-    showError(weightage, 'Product Weightage is required.');
-  }
+  if (!weightage.value.trim()) showError(weightage, 'Product Weightage is required.');
 
-  // Validate Quantity
   const quantity = document.getElementById('quantity');
-  if (!quantity.value.trim()) {
-    showError(quantity, 'Product Quantity is required.');
-  }
+  if (!quantity.value.trim()) showError(quantity, 'Product Quantity is required.');
 
-  // Validate Company selection
   const company = document.getElementById('company');
-  if (!company.value) {
-    showError(company, 'Please select a company.');
-  }
+  if (!company.value) showError(company, 'Please select a company.');
 
-  // Validate Product Description (textarea)
   const description = document.getElementById('description');
-  if (!description.value.trim()) {
-    showError(description, 'Product Description is required.');
-  }
+  if (!description.value.trim()) showError(description, 'Product Description is required.');
 
-  // Validate Image (required)
   const imageInput = document.getElementById('image');
-  if (!imageInput.value) {
-    showError(imageInput, 'Please upload a product image.');
-  }
+  if (!imageInput.value) showError(imageInput, 'Please upload a product image.');
 
-  // Validate Start Date
   const startDate = document.getElementById('start-date');
-  if (!startDate.value) {
-    showError(startDate, 'Start Date is required.');
-  }
+  if (!startDate.value) showError(startDate, 'Start Date is required.');
 
-  // Validate End Date
   const endDate = document.getElementById('end-date');
-  if (!endDate.value) {
-    showError(endDate, 'End Date is required.');
-  }
+  if (!endDate.value) showError(endDate, 'End Date is required.');
 
-  // Validate Price
   const price = document.getElementById('price');
-  if (!price.value.trim()) {
-    showError(price, 'Price is required.');
-  }
+  if (!price.value.trim()) showError(price, 'Price is required.');
 
-  if (valid) {
-    // Convert image file to base64 string before sending
-    const file = imageInput.files[0];
-    const reader = new FileReader();
+  if (!valid) return; // If validation failed, stop here
 
-    reader.onloadend = function() {
-      const base64Image = reader.result; // base64 string of image
+  // Proceed with image conversion and submit data
+  const file = imageInput.files[0];
+  const reader = new FileReader();
 
-      const productData = {
-        barcode: barcode.value.trim(),
-        name: productName.value.trim(),
-        details: productDetails.value.trim(),
-        weight: weightage.value.trim(),
-        quantity: quantity.value.trim(),
-        company: company.value,
-        description: description.value.trim(),
-        startDate: startDate.value,
-        endDate: endDate.value,
-        price: price.value.trim(),
-        image: base64Image
-      };
+  reader.onloadend = function() {
+    const base64Image = reader.result; // base64 string of image
 
-      fetch("https://productslist.onrender.com/api/products", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(productData)
-      })
-      .then(response => {
-        if (response.ok) {
-          alert('Product added successfully!');
-          document.getElementById('productForm').reset();
-        } else {
-          alert('Failed to add product.');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred.');
-      });
+    const productData = {
+      barcode: barcode.value.trim(),
+      name: productName.value.trim(),
+      details: productDetails.value.trim(),
+      weight: weightage.value.trim(),
+      quantity: quantity.value.trim(),
+      company: company.value,
+      description: description.value.trim(),
+      startDate: startDate.value,
+      endDate: endDate.value,
+      price: price.value.trim(),
+      image: base64Image
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      alert('Please upload an image file.');
-    }
+    fetch("https://productslist.onrender.com/api/products", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(productData)
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Product added successfully!');
+        document.getElementById('productForm').reset();
+      } else {
+        alert('Failed to add product.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred.');
+    });
+  };
+
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    alert('Please upload an image file.');
   }
-  window.addEventListener("DOMContentLoaded", () => {
-    fetch('https://productslist.onrender.com/api/companies')
-      .then(res => res.json())
-      .then(companies => {
-        const select = document.getElementById("companySelect");
-
-        const uniqueCompanyNames = new Set();
-        companies.forEach(company => {
-          if (!uniqueCompanyNames.has(company.companyName)) {
-            uniqueCompanyNames.add(company.companyName);
-
-            const option = document.createElement("option");
-            option.value = company.companyName;
-            option.textContent = company.companyName;
-            select.appendChild(option);
-          }
-        });
-      })
-      .catch(err => {
-        console.error("Failed to fetch companies:", err);
-        alert("Could not load company names. Please try again later.");
-      });
-  });
 });

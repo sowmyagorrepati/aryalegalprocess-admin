@@ -134,4 +134,27 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
       alert('Please upload an image file.');
     }
   }
+  window.addEventListener("DOMContentLoaded", () => {
+    fetch('https://productslist.onrender.com/api/companies')
+      .then(res => res.json())
+      .then(companies => {
+        const select = document.getElementById("companySelect");
+
+        const uniqueCompanyNames = new Set();
+        companies.forEach(company => {
+          if (!uniqueCompanyNames.has(company.companyName)) {
+            uniqueCompanyNames.add(company.companyName);
+
+            const option = document.createElement("option");
+            option.value = company.companyName;
+            option.textContent = company.companyName;
+            select.appendChild(option);
+          }
+        });
+      })
+      .catch(err => {
+        console.error("Failed to fetch companies:", err);
+        alert("Could not load company names. Please try again later.");
+      });
+  });
 });

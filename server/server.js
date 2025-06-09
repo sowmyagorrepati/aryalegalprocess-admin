@@ -4,7 +4,6 @@ const cors = require('cors');
 require('dotenv').config();
 
 const productRoutes = require('./routes/products');
-// companyRoutes is now a function accepting the Company model
 const companyRoutes = require('./routes/companies');
 
 const app = express();
@@ -12,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: 'https://sowmyagorrepati.github.io', 
+  origin: 'https://sowmyagorrepati.github.io',
   methods: ['GET', 'POST'],
   credentials: true
 }));
@@ -23,6 +22,11 @@ const productConnection = mongoose.createConnection(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
+productConnection.on('error', (err) => {
+  console.error('Product DB connection error:', err);
+});
+
 productConnection.once('open', () => {
   console.log('Connected to product database');
 });
@@ -32,6 +36,11 @@ const companyConnection = mongoose.createConnection(process.env.MONGO_URI_COMPAN
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
+companyConnection.on('error', (err) => {
+  console.error('Company DB connection error:', err);
+});
+
 companyConnection.once('open', () => {
   console.log('Connected to company database');
 });
@@ -47,15 +56,16 @@ const companySchema = new mongoose.Schema({
   contactEmail: String,
   address: String
 });
+
 const Company = companyConnection.model('Company', companySchema);
 
 // Use routes
-app.use('/api/products', productRoutes);  // assuming productRoutes is a normal router
+app.use('/api/products', productRoutes);
 
 // Pass the Company model instance to the company routes function
 app.use('/api/companies', companyRoutes(Company));
 
-// Start the server only when both DB connections are open
+// Start server only when both DB connections are ready
 Promise.all([
   new Promise(resolve => productConnection.once('open', resolve)),
   new Promise(resolve => companyConnection.once('open', resolve))

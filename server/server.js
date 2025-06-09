@@ -4,7 +4,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const productRoutes = require('./routes/products');
-const companyRoutes = require('./routes/companies'); // company routes file (create this)
+// companyRoutes is now a function accepting the Company model
+const companyRoutes = require('./routes/companies');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,12 +36,24 @@ companyConnection.once('open', () => {
   console.log('Connected to company database');
 });
 
-// Inject connections into models
-// For products - your existing model file uses mongoose.model, so adjust accordingly or pass connection if needed.
+// Define Company schema and model on companyConnection
+const companySchema = new mongoose.Schema({
+  companyName: String,
+  status: String,
+  startDate: String,
+  endDate: String,
+  contactName: String,
+  contactNumber: String,
+  contactEmail: String,
+  address: String
+});
+const Company = companyConnection.model('Company', companySchema);
 
-// Use routes, pass connections if you want separate model binding:
-app.use('/api/products', productRoutes);
-app.use('/api/companies', companyRoutes);
+// Use routes
+app.use('/api/products', productRoutes);  // assuming productRoutes is a normal router
+
+// Pass the Company model instance to the company routes function
+app.use('/api/companies', companyRoutes(Company));
 
 // Start the server only when both DB connections are open
 Promise.all([

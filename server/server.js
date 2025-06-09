@@ -76,3 +76,7 @@ Promise.all([
 }).catch(err => {
   console.error('Error connecting to databases:', err);
 });
+// Catch-all for unknown API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
+});

@@ -80,3 +80,6 @@ Promise.all([
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
+app.get('/test', (req, res) => {
+  res.send('Backend is alive');
+});

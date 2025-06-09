@@ -15,8 +15,8 @@ app.use(cors({
 }));
 
 // Increase payload size limits to handle large Base64 images
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 // --- Connect to MongoDB for Products ---
 const productConnection = mongoose.createConnection(process.env.MONGO_URI, {

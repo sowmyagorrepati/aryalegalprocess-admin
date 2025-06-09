@@ -6,13 +6,17 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// --- Middleware ---
+// Allow CORS
 app.use(cors({
   origin: 'https://sowmyagorrepati.github.io',
   methods: ['GET', 'POST'],
   credentials: true
 }));
-app.use(express.json());
+
+// Increase payload size limits to handle large Base64 images
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // --- Connect to MongoDB for Products ---
 const productConnection = mongoose.createConnection(process.env.MONGO_URI, {
@@ -39,8 +43,10 @@ const productSchema = new mongoose.Schema({
   description: String,
   startDate: String,
   endDate: String,
-  price: String
+  price: String,
+  image: String  // Add this line if storing image Base64 string
 });
+
 const Product = productConnection.model('Product', productSchema);
 
 // --- Connect to MongoDB for Companies ---
@@ -68,17 +74,27 @@ const companySchema = new mongoose.Schema({
   contactEmail: String,
   address: String
 });
+
 const Company = companyConnection.model('Company', companySchema);
 
-// Import routes and pass models
+// --- Routes ---
 const productRoutes = require('./routes/products')(Product);
 const companyRoutes = require('./routes/companies')(Company);
 
-// Use routes
 app.use('/api/products', productRoutes);
 app.use('/api/companies', companyRoutes);
 
-// Start server only when both DB connections are ready
+// --- Catch unknown API routes ---
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
+});
+
+// --- Health Check ---
+app.get('/test', (req, res) => {
+  res.send('Backend is alive');
+});
+
+// --- Start server when DBs are connected ---
 Promise.all([
   new Promise(resolve => productConnection.once('open', resolve)),
   new Promise(resolve => companyConnection.once('open', resolve))
@@ -88,13 +104,4 @@ Promise.all([
   });
 }).catch(err => {
   console.error('Error connecting to databases:', err);
-});
-
-// Catch-all for unknown API routes
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ error: 'API route not found' });
-});
-
-app.get('/test', (req, res) => {
-  res.send('Backend is alive');
 });

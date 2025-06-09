@@ -1,11 +1,11 @@
-// 1. Populate companies dropdown when the page loads
+// Fetch companies and populate select on page load
 window.addEventListener("DOMContentLoaded", () => {
   fetch('https://productslist.onrender.com/api/companies')
     .then(res => res.json())
     .then(companies => {
-      const select = document.getElementById("company"); // Use "company" to match your validation
-
+      const select = document.getElementById("company");  // Make sure this matches your HTML ID
       const uniqueCompanyNames = new Set();
+
       companies.forEach(company => {
         if (!uniqueCompanyNames.has(company.companyName)) {
           uniqueCompanyNames.add(company.companyName);
@@ -23,7 +23,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// 2. Form submit handler with validation and submission
 document.getElementById('productForm').addEventListener('submit', function(e) {
   e.preventDefault(); // prevent actual form submission
 
@@ -33,7 +32,6 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
 
   let valid = true;
 
-  // Helper function to show error
   function showError(input, message) {
     valid = false;
     const error = document.createElement('div');
@@ -45,7 +43,7 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     input.parentNode.insertBefore(error, input.nextSibling);
   }
 
-  // Validate inputs
+  // Validation code...
   const barcode = document.getElementById('barcode');
   if (!barcode.value.trim()) showError(barcode, 'Barcode Number is required.');
 
@@ -79,53 +77,52 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
   const price = document.getElementById('price');
   if (!price.value.trim()) showError(price, 'Price is required.');
 
-  if (!valid) return; // If validation failed, stop here
+  if (valid) {
+    const file = imageInput.files[0];
+    const reader = new FileReader();
 
-  // Proceed with image conversion and submit data
-  const file = imageInput.files[0];
-  const reader = new FileReader();
+    reader.onloadend = function() {
+      const base64Image = reader.result;
 
-  reader.onloadend = function() {
-    const base64Image = reader.result; // base64 string of image
+      const productData = {
+        barcode: barcode.value.trim(),
+        name: productName.value.trim(),
+        details: productDetails.value.trim(),
+        weight: weightage.value.trim(),
+        quantity: quantity.value.trim(),
+        company: company.value,
+        description: description.value.trim(),
+        startDate: startDate.value,
+        endDate: endDate.value,
+        price: price.value.trim(),
+        image: base64Image
+      };
 
-    const productData = {
-      barcode: barcode.value.trim(),
-      name: productName.value.trim(),
-      details: productDetails.value.trim(),
-      weight: weightage.value.trim(),
-      quantity: quantity.value.trim(),
-      company: company.value,
-      description: description.value.trim(),
-      startDate: startDate.value,
-      endDate: endDate.value,
-      price: price.value.trim(),
-      image: base64Image
+      fetch("https://productslist.onrender.com/api/products", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Product added successfully!');
+          document.getElementById('productForm').reset();
+        } else {
+          alert('Failed to add product.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+      });
     };
 
-    fetch("https://productslist.onrender.com/api/products", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(productData)
-    })
-    .then(response => {
-      if (response.ok) {
-        alert('Product added successfully!');
-        document.getElementById('productForm').reset();
-      } else {
-        alert('Failed to add product.');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('An error occurred.');
-    });
-  };
-
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    alert('Please upload an image file.');
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please upload an image file.');
+    }
   }
 });

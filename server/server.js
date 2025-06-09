@@ -3,9 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-const productRoutes = require('./routes/products');
-const companyRoutes = require('./routes/companies');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,6 +27,21 @@ productConnection.on('error', (err) => {
 productConnection.once('open', () => {
   console.log('Connected to product database');
 });
+
+// Define Product schema and model on productConnection
+const productSchema = new mongoose.Schema({
+  barcode: String,
+  name: String,
+  details: String,
+  weight: String,
+  quantity: String,
+  company: String,
+  description: String,
+  startDate: String,
+  endDate: String,
+  price: String
+});
+const Product = productConnection.model('Product', productSchema);
 
 // --- Connect to MongoDB for Companies ---
 const companyConnection = mongoose.createConnection(process.env.MONGO_URI_COMPANY, {
@@ -56,14 +68,15 @@ const companySchema = new mongoose.Schema({
   contactEmail: String,
   address: String
 });
-
 const Company = companyConnection.model('Company', companySchema);
+
+// Import routes and pass models
+const productRoutes = require('./routes/products')(Product);
+const companyRoutes = require('./routes/companies')(Company);
 
 // Use routes
 app.use('/api/products', productRoutes);
-
-// Pass the Company model instance to the company routes function
-app.use('/api/companies', companyRoutes(Company));
+app.use('/api/companies', companyRoutes);
 
 // Start server only when both DB connections are ready
 Promise.all([
@@ -76,10 +89,12 @@ Promise.all([
 }).catch(err => {
   console.error('Error connecting to databases:', err);
 });
+
 // Catch-all for unknown API routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route not found' });
 });
+
 app.get('/test', (req, res) => {
   res.send('Backend is alive');
 });

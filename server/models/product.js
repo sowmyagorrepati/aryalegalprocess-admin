@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const productSchema = new mongoose.Schema({
   barcode: String,
   name: String,
@@ -13,4 +11,4 @@ const productSchema = new mongoose.Schema({
   price: String
 });
 
-module.exports = mongoose.model('Product', productSchema);
+const Product = productConnection.model('Product', productSchema);

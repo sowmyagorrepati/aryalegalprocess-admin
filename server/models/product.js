@@ -8,7 +8,8 @@ const productSchema = new mongoose.Schema({
   description: String,
   startDate: String,
   endDate: String,
-  price: String
+  price: String,
+  image: String,  // Add image field here (string)
 });
 
 const Product = productConnection.model('Product', productSchema);

@@ -61,10 +61,10 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     showError(description, 'Product Description is required.');
   }
 
-  // Validate Image (optional: you can add required if needed)
-  const image = document.getElementById('image');
-  if (!image.value) {
-    showError(image, 'Please upload a product image.');
+  // Validate Image (required)
+  const imageInput = document.getElementById('image');
+  if (!imageInput.value) {
+    showError(imageInput, 'Please upload a product image.');
   }
 
   // Validate Start Date
@@ -85,39 +85,53 @@ document.getElementById('productForm').addEventListener('submit', function(e) {
     showError(price, 'Price is required.');
   }
 
-    if (valid) {
-  const productData = {
-    barcode: barcode.value.trim(),
-    name: productName.value.trim(),
-    details: productDetails.value.trim(),
-    weight: weightage.value.trim(),
-    quantity: quantity.value.trim(),
-    company: company.value,
-    description: description.value.trim(),
-    startDate: startDate.value,
-    endDate: endDate.value,
-    price: price.value.trim()
-  };
+  if (valid) {
+    // Convert image file to base64 string before sending
+    const file = imageInput.files[0];
+    const reader = new FileReader();
 
-fetch("https://productslist.onrender.com/api/products", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(productData)
-  })
-  .then(response => {
-    if (response.ok) {
-      alert('Product added successfully!');
-      document.getElementById('productForm').reset();
+    reader.onloadend = function() {
+      const base64Image = reader.result; // base64 string of image
+
+      const productData = {
+        barcode: barcode.value.trim(),
+        name: productName.value.trim(),
+        details: productDetails.value.trim(),
+        weight: weightage.value.trim(),
+        quantity: quantity.value.trim(),
+        company: company.value,
+        description: description.value.trim(),
+        startDate: startDate.value,
+        endDate: endDate.value,
+        price: price.value.trim(),
+        image: base64Image
+      };
+
+      fetch("https://productslist.onrender.com/api/products", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(productData)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Product added successfully!');
+          document.getElementById('productForm').reset();
+        } else {
+          alert('Failed to add product.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+      });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
     } else {
-      alert('Failed to add product.');
+      alert('Please upload an image file.');
     }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    alert('An error occurred.');
-  });
-}
-
+  }
 });
